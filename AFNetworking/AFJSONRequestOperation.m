@@ -110,7 +110,9 @@ static dispatch_queue_t json_request_operation_processing_queue() {
         if (self.error) {
             if (failure) {
                 dispatch_async(self.failureCallbackQueue ?: dispatch_get_main_queue(), ^{
-                    failure(self, self.error);
+                    if (![self isCancelled]) {
+                        failure(self, self.error);
+                    }
                 });
             }
         } else {
@@ -120,13 +122,17 @@ static dispatch_queue_t json_request_operation_processing_queue() {
                 if (self.JSONError) {
                     if (failure) {
                         dispatch_async(self.failureCallbackQueue ?: dispatch_get_main_queue(), ^{
-                            failure(self, self.error);
+                            if (![self isCancelled]) {
+                                failure(self, self.error);
+                            }
                         });
                     }
                 } else {
                     if (success) {
                         dispatch_async(self.successCallbackQueue ? : dispatch_get_main_queue(), ^{
-                            success(self, JSON);
+                            if (![self isCancelled]) {
+                                success(self, JSON);
+                            }
                         });
                     }                    
                 }

@@ -442,7 +442,9 @@ static inline BOOL AFStateTransitionIsValid(AFOperationState fromState, AFOperat
 
 - (void)cancel {
     [self.lock lock];
-    if (![self isFinished] && ![self isCancelled]) {
+    
+    // Remove the testing for [self isFinished], make the cancellation work even if the request is finished.
+    if (![self isCancelled]) {
         [self willChangeValueForKey:@"isCancelled"];
         _cancelled = YES;
         [super cancel];
